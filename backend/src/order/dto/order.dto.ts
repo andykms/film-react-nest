@@ -1,11 +1,11 @@
 //TODO реализовать DTO для /orders
 import {
-  IsFQDN,
   IsNotEmpty,
   IsString,
   IsNumber,
   IsArray,
   ArrayMinSize,
+  IsEmail,
 } from 'class-validator';
 
 class orderFilmDto {
@@ -40,11 +40,13 @@ class orderFilmDto {
 
 export class orderDto {
   @IsArray()
-  @IsString({ each: true })
   @IsNotEmpty()
   @ArrayMinSize(1)
-  items: orderFilmDto[];
+  tickets: orderFilmDto[];
   @IsNotEmpty()
-  @IsNumber()
-  total: number;
+  @IsEmail()
+  email: string;
+  @IsNotEmpty()
+  @IsString()
+  phone: string;
 }

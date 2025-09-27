@@ -3,13 +3,15 @@ import FilmsRepository from '../repository/type';
 
 @Injectable()
 export class FilmsService {
-  constructor(private filmRepository: FilmsRepository) {}
+  constructor(
+    @Inject('FilmsRepository') private filmRepository: FilmsRepository,
+  ) {}
 
   async getFilms() {
-    return await this.filmRepository.findAll();
+    return { items: await this.filmRepository.findAll() };
   }
 
   async getFilm(id: string) {
-    return await this.filmRepository.findOne(id);
+    return { items: (await this.filmRepository.findOne(id)).schedule };
   }
 }

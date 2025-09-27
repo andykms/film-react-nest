@@ -1,4 +1,4 @@
-import { Mongoose } from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 import {
   Injectable,
   InternalServerErrorException,
@@ -12,11 +12,8 @@ import { AppConfig } from '../../app.config.provider';
 
 @Injectable()
 export class FilmsMongoDBRepository implements FilmsRepository {
-  @Inject('CONFIG')
-  private config: AppConfig;
-
-  constructor(private connection: Mongoose) {
-    connection.connect(this.config.database.url);
+  constructor(@Inject('CONFIG') private appConfig: AppConfig) {
+    mongoose.connect(this.appConfig.database.url);
   }
 
   async findAll(): Promise<filmDto[]> {
@@ -30,14 +27,14 @@ export class FilmsMongoDBRepository implements FilmsRepository {
 
   async findOne(id: string): Promise<filmDto> {
     try {
-      const film = await Film.findById(id);
-
+      const film = await Film.findOne({ id });
       if (!film) {
         throw new NotFoundException('фильм не найден');
       }
 
       return film;
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException();
     }
   }
@@ -51,7 +48,7 @@ export class FilmsMongoDBRepository implements FilmsRepository {
       const schedulePath = Symbol(`schedule.${scheduleIndex}`);
       const option = {};
       option[schedulePath] = { taken: { $push: seat } };
-      const film = await Film.findByIdAndUpdate(id, option, { new: true });
+      const film = await Film.findOneAndUpdate({ id }, option, { new: true });
       return film;
     } catch (error) {
       throw new InternalServerErrorException();
