@@ -25,7 +25,6 @@ import * as winston from 'winston';
         info: 4,
       },
       transports: [
-        new winston.transports.Console({ format: winston.format.simple() }),
         new winston.transports.File({
           filename: path.join(__dirname, '../logs/error.log'),
           level: 'error',
