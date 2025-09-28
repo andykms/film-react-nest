@@ -68,7 +68,7 @@ export class OrderService {
   async create(order: orderDto) {
     const taken = await this._checkIsValidAndGetTaken(order);
     const updatedFilms = [];
-    taken.forEach(async ({ filmId, scheduleIndex, seat }) => {
+    for (const { filmId, scheduleIndex, seat } of taken) {
       try {
         const updatedFilm = await this.filmsRepository.findByIdAndUpdateTaken(
           filmId,
@@ -79,7 +79,7 @@ export class OrderService {
       } catch (error) {
         this._errorThrow(error);
       }
-    });
+    }
     return { items: updatedFilms };
   }
 }
