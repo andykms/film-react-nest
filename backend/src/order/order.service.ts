@@ -3,7 +3,6 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 import { orderDto } from './dto/order.dto';
 import FilmsRepository from '../repository/type';
