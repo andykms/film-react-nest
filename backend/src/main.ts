@@ -10,7 +10,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.enableCors({
-    origin: 'http://localhost:5173', // URL вашего фронтенда
+    origin: 'http://localhost:5173',
     credentials: true,
   });
   await app.listen(3000);

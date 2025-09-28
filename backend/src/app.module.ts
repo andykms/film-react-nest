@@ -7,14 +7,15 @@ import * as path from 'node:path';
 import { configProvider } from './app.config.provider';
 import { FilmsModule } from './films/films.module';
 import { OrderModule } from './order/order.module';
-import { FilmsMongoDBRepository } from './repository/mongoDB/filmRepository';
 import { RepositoryModule } from './repository/repository.module';
 import { WinstonModule } from 'nest-winston';
+import { ThrottlerModule } from '@nestjs/throttler';
 import * as winston from 'winston';
 
 @Global()
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{ ttl: 60, limit: 50 }]),
     WinstonModule.forRoot({
       levels: {
         critical_error: 0,
@@ -26,7 +27,7 @@ import * as winston from 'winston';
       transports: [
         new winston.transports.Console({ format: winston.format.simple() }),
         new winston.transports.File({
-          filename: '../logs/error.log',
+          filename: path.join(__dirname, '../logs/error.log'),
           level: 'error',
         }),
       ],

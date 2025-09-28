@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { orderDto } from './dto/order.dto';
 import FilmsRepository from '../repository/type';
+import { HttpException } from '@nestjs/common';
 
 type takenInfo = {
   filmId: string;
@@ -31,18 +32,17 @@ export class OrderService {
 
         let scheduleIndex = 0;
         const choosenHall = filmDto.schedule.find((hall, index) => {
+          scheduleIndex = index;
           return hall.id === ticket.session;
         });
 
         if (!choosenHall) {
-          console.log('АШИБКААААА');
           throw new BadRequestException('сеанс фильма не найден');
         }
 
         const choosenSeat = `${ticket.row}:${ticket.seat}`;
 
         if (choosenHall.taken.some((seat) => seat === choosenSeat)) {
-          console.log('АШИБКААААА');
           throw new BadRequestException('место уже занято');
         }
 
@@ -52,14 +52,18 @@ export class OrderService {
           seat: choosenSeat,
         });
       } catch (error) {
-        if (error instanceof NotFoundException) {
-          throw new InternalServerErrorException(error.message);
-        }
-        throw new InternalServerErrorException();
+        this._errorThrow(error);
       }
     }
 
     return addedSeatsStack;
+  }
+
+  private _errorThrow(error?: unknown) {
+    if (error instanceof HttpException) {
+      throw error;
+    }
+    throw new InternalServerErrorException();
   }
 
   async create(order: orderDto) {
@@ -74,7 +78,7 @@ export class OrderService {
         );
         updatedFilms.push(updatedFilm);
       } catch (error) {
-        throw new InternalServerErrorException();
+        this._errorThrow(error);
       }
     });
     return { items: updatedFilms };

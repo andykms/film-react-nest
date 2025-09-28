@@ -6,7 +6,9 @@ import {
   IsString,
   IsNumber,
   IsArray,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class scheduleDto {
   @IsString()
@@ -62,5 +64,7 @@ export class filmDto {
   description: string;
   @IsArray()
   @IsNotEmpty()
+  @Type(() => scheduleDto)
+  @ValidateNested({ each: true })
   schedule: scheduleDto[];
 }
