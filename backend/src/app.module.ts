@@ -10,6 +10,7 @@ import { OrderModule } from './order/order.module';
 import { RepositoryModule } from './repository/repository.module';
 import { WinstonModule } from 'nest-winston';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as winston from 'winston';
 
 @Global()
@@ -26,7 +27,7 @@ import * as winston from 'winston';
       },
       transports: [
         new winston.transports.File({
-          filename: path.join(__dirname, '../logs/error.log'),
+          filename: path.join(__dirname, './logs/error.log'),
           level: 'error',
         }),
       ],
