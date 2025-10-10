@@ -10,12 +10,13 @@ import { OrderModule } from './order/order.module';
 import { RepositoryModule } from './repository/repository.module';
 import { WinstonModule } from 'nest-winston';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from './database/database.module';
 import * as winston from 'winston';
 
 @Global()
 @Module({
   imports: [
+    DatabaseModule.forRoot(configProvider.useValue, { synchronize: true }),
     ThrottlerModule.forRoot([{ ttl: 60, limit: 50 }]),
     WinstonModule.forRoot({
       levels: {
@@ -31,10 +32,6 @@ import * as winston from 'winston';
           level: 'error',
         }),
       ],
-    }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      cache: true,
     }),
     // @todo: Добавьте раздачу статических файлов из public
     ServeStaticModule.forRoot({
