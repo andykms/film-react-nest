@@ -6,6 +6,7 @@ import {
   IsString,
   IsNumber,
   IsArray,
+  ArrayUnique,
 } from 'class-validator';
 
 export class sheduleDto {
@@ -28,6 +29,7 @@ export class sheduleDto {
   @IsNotEmpty()
   price: number;
   @IsArray()
+  @ArrayUnique()
   @IsString({ each: true })
   @IsNotEmpty()
   taken: string[];

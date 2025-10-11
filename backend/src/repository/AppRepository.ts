@@ -2,13 +2,10 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  Inject,
   HttpException,
 } from '@nestjs/common';
 import { filmDto, sheduleDto, filmFullDto } from '../films/dto/films.dto';
 import IAppRepository from './type';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Film } from '../films/entities/film.entity';
@@ -19,7 +16,6 @@ export class AppRepository implements IAppRepository {
   constructor(
     @InjectRepository(Film) private filmRepository: Repository<Film>,
     @InjectRepository(Shedule) private sheduleRepository: Repository<Shedule>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async findAll(): Promise<filmDto[]> {
@@ -32,18 +28,8 @@ export class AppRepository implements IAppRepository {
     }
   }
 
-  private _getFullFilmCacheKey(id: string) {
-    return `film:full:${id}`;
-  }
-
   async findOne(id: string): Promise<filmFullDto> {
     try {
-      const filmFullCacheKey = this._getFullFilmCacheKey(id);
-      const cachedFilm =
-        await this.cacheManager.get<filmFullDto>(filmFullCacheKey);
-      if (cachedFilm) {
-        return cachedFilm;
-      }
       const film = await this.filmRepository.findOne({
         where: {
           id,
@@ -52,10 +38,6 @@ export class AppRepository implements IAppRepository {
           shedules: true,
         },
       });
-      if (!film) {
-        throw new NotFoundException('фильм не найден');
-      }
-      await this.cacheManager.set<filmFullDto>(filmFullCacheKey, film);
       return film;
     } catch (error) {
       this._errorThrow(error);
@@ -64,14 +46,6 @@ export class AppRepository implements IAppRepository {
 
   async findShedule(id: string): Promise<sheduleDto> {
     try {
-      const sheduleCacheKey = `shedule:${id}`;
-      const cachedShedule =
-        await this.cacheManager.get<sheduleDto>(sheduleCacheKey);
-      if (cachedShedule) {
-        return cachedShedule;
-      }
-      console.log(await this.sheduleRepository.find());
-      console.log(id);
       const shedule = await this.sheduleRepository.findOne({
         where: {
           id,
@@ -80,7 +54,6 @@ export class AppRepository implements IAppRepository {
       if (!shedule) {
         throw new NotFoundException('сеанс не найден');
       }
-      await this.cacheManager.set<sheduleDto>(sheduleCacheKey, shedule);
       return shedule;
     } catch (error) {
       this._errorThrow(error);
@@ -98,7 +71,7 @@ export class AppRepository implements IAppRepository {
     try {
       const shedule = await this.findShedule(id);
       shedule.taken.push(seat);
-      this.sheduleRepository.save(shedule);
+      await this.sheduleRepository.save(shedule);
       return shedule;
     } catch (error) {
       this._errorThrow(error);

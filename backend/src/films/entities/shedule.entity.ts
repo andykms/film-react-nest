@@ -48,7 +48,6 @@ export class Shedule {
 
   @Column('text', { array: true })
   @IsArray()
-  @IsString({ each: true })
   @ArrayUnique()
   taken: string[];
 

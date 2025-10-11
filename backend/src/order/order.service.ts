@@ -7,7 +7,6 @@ import {
 import { orderDto } from './dto/order.dto';
 import IAppRepository from '../repository/type';
 import { HttpException } from '@nestjs/common';
-import { sheduleDto } from '../films/dto/films.dto';
 
 @Injectable()
 export class OrderService {
@@ -24,6 +23,10 @@ export class OrderService {
         if (!film.shedules.some((item) => item.id == shedule.id)) {
           throw new BadRequestException('сессия фильма не найдена');
         }
+        const seat = this.seatString(ticket.row, ticket.seat);
+        if (shedule.taken.includes(seat)) {
+          throw new BadRequestException('место уже занято');
+        }
       } catch (error) {
         this._errorThrow(error);
       }
@@ -39,22 +42,21 @@ export class OrderService {
     throw new InternalServerErrorException();
   }
 
+  private seatString(row: string | number, seat: string | number) {
+    return `${row}:${seat}`;
+  }
+
   async create(order: orderDto) {
     const tickets = order.tickets;
-    const updTickets: sheduleDto[] = [];
     try {
       await this._isValidTickets(order);
       for (const ticket of tickets) {
-        const choosenSeat = `${ticket.row}:${ticket.seat}`;
-        const updTicket = await this.appRepository.updateShedule(
-          ticket.session,
-          choosenSeat,
-        );
-        updTickets.push(updTicket);
+        const choosenSeat = this.seatString(ticket.row, ticket.seat);
+        await this.appRepository.updateShedule(ticket.session, choosenSeat);
       }
       return {
-        items: updTickets,
-        total: updTickets.length,
+        items: tickets,
+        total: tickets.length,
       };
     } catch (error) {
       this._errorThrow(error);
