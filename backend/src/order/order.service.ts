@@ -7,15 +7,7 @@ import {
 import { orderDto } from './dto/order.dto';
 import IAppRepository from '../repository/type';
 import { HttpException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Film } from '../films/entities/film.entity';
 import { sheduleDto } from '../films/dto/films.dto';
-
-type takenInfo = {
-  filmId: string;
-  scheduleIndex: number;
-  seat: string;
-};
 
 @Injectable()
 export class OrderService {

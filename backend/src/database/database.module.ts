@@ -1,4 +1,4 @@
-import { Module, Inject, DynamicModule } from '@nestjs/common';
+import { Module, DynamicModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Film } from '../films/entities/film.entity';
 import { Shedule } from '../films/entities/shedule.entity';
@@ -9,9 +9,16 @@ export enum DatabaseNames {
   PostgreSQL = 'postgres',
 }
 
+interface IAddedOptions {
+  [key: string]: unknown;
+}
+
 @Module({})
 export class DatabaseModule {
-  static forRoot(configProvider: AppConfig, added?: Object): DynamicModule {
+  static forRoot(
+    configProvider: AppConfig,
+    added?: IAddedOptions,
+  ): DynamicModule {
     const databaseConfig = configProvider.database;
     switch (databaseConfig.driver) {
       case DatabaseNames.MongoDB:

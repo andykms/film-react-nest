@@ -4,7 +4,6 @@ import {
   Length,
   IsNumber,
   IsNotEmpty,
-  IsAlpha,
   IsArray,
 } from '@nestjs/class-validator';
 import { Shedule } from './shedule.entity';

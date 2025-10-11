@@ -13,7 +13,7 @@ import {
   IsString,
   Length,
 } from '@nestjs/class-validator';
-import { ArrayUnique, ValidateNested } from 'class-validator';
+import { ArrayUnique } from 'class-validator';
 
 @Entity()
 export class Shedule {
