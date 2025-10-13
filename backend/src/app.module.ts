@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ConfigModule } from '@nestjs/config';
 import { Global } from '@nestjs/common';
 import * as path from 'node:path';
 
@@ -10,11 +9,13 @@ import { OrderModule } from './order/order.module';
 import { RepositoryModule } from './repository/repository.module';
 import { WinstonModule } from 'nest-winston';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { DatabaseModule } from './database/database.module';
 import * as winston from 'winston';
 
 @Global()
 @Module({
   imports: [
+    DatabaseModule.forRoot(configProvider.useValue, { synchronize: true }),
     ThrottlerModule.forRoot([{ ttl: 60, limit: 50 }]),
     WinstonModule.forRoot({
       levels: {
@@ -26,14 +27,10 @@ import * as winston from 'winston';
       },
       transports: [
         new winston.transports.File({
-          filename: path.join(__dirname, '../logs/error.log'),
+          filename: path.join(__dirname, './logs/error.log'),
           level: 'error',
         }),
       ],
-    }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      cache: true,
     }),
     // @todo: Добавьте раздачу статических файлов из public
     ServeStaticModule.forRoot({

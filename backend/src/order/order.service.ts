@@ -5,57 +5,34 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { orderDto } from './dto/order.dto';
-import FilmsRepository from '../repository/type';
+import IAppRepository from '../repository/type';
 import { HttpException } from '@nestjs/common';
-
-type takenInfo = {
-  filmId: string;
-  scheduleIndex: number;
-  seat: string;
-};
 
 @Injectable()
 export class OrderService {
   constructor(
-    @Inject('FilmsRepository') private filmsRepository: FilmsRepository,
+    @Inject('FilmsRepository') private appRepository: IAppRepository,
   ) {}
 
-  private async _checkIsValidAndGetTaken(
-    order: orderDto,
-  ): Promise<takenInfo[]> {
+  private async _isValidTickets(order: orderDto): Promise<boolean> {
     const tickets = order.tickets;
-    const addedSeatsStack: takenInfo[] = [];
     for (const ticket of tickets) {
       try {
-        const filmDto = await this.filmsRepository.findOne(ticket.film);
-
-        let scheduleIndex = 0;
-        const choosenHall = filmDto.schedule.find((hall, index) => {
-          scheduleIndex = index;
-          return hall.id === ticket.session;
-        });
-
-        if (!choosenHall) {
-          throw new BadRequestException('сеанс фильма не найден');
+        const film = await this.appRepository.findOne(ticket.film);
+        const shedule = await this.appRepository.findShedule(ticket.session);
+        if (!film.shedules.some((item) => item.id == shedule.id)) {
+          throw new BadRequestException('сессия фильма не найдена');
         }
-
-        const choosenSeat = `${ticket.row}:${ticket.seat}`;
-
-        if (choosenHall.taken.some((seat) => seat === choosenSeat)) {
+        const seat = this.seatString(ticket.row, ticket.seat);
+        if (shedule.taken.includes(seat)) {
           throw new BadRequestException('место уже занято');
         }
-
-        addedSeatsStack.push({
-          filmId: ticket.film,
-          scheduleIndex,
-          seat: choosenSeat,
-        });
       } catch (error) {
         this._errorThrow(error);
       }
     }
 
-    return addedSeatsStack;
+    return true;
   }
 
   private _errorThrow(error?: unknown) {
@@ -65,21 +42,24 @@ export class OrderService {
     throw new InternalServerErrorException();
   }
 
+  private seatString(row: string | number, seat: string | number) {
+    return `${row}:${seat}`;
+  }
+
   async create(order: orderDto) {
-    const taken = await this._checkIsValidAndGetTaken(order);
-    const updatedFilms = [];
-    for (const { filmId, scheduleIndex, seat } of taken) {
-      try {
-        const updatedFilm = await this.filmsRepository.findByIdAndUpdateTaken(
-          filmId,
-          scheduleIndex,
-          seat,
-        );
-        updatedFilms.push(updatedFilm);
-      } catch (error) {
-        this._errorThrow(error);
+    const tickets = order.tickets;
+    try {
+      await this._isValidTickets(order);
+      for (const ticket of tickets) {
+        const choosenSeat = this.seatString(ticket.row, ticket.seat);
+        await this.appRepository.updateShedule(ticket.session, choosenSeat);
       }
+      return {
+        items: tickets,
+        total: tickets.length,
+      };
+    } catch (error) {
+      this._errorThrow(error);
     }
-    return { items: updatedFilms };
   }
 }

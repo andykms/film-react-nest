@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class orderFilmDto {
+export class orderFilmDto {
   @IsString()
   @IsNotEmpty()
   film: string;

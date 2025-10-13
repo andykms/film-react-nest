@@ -6,11 +6,10 @@ import {
   IsString,
   IsNumber,
   IsArray,
-  ValidateNested,
+  ArrayUnique,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 
-export class scheduleDto {
+export class sheduleDto {
   @IsString()
   @IsNotEmpty()
   id: string;
@@ -28,8 +27,9 @@ export class scheduleDto {
   seats: number;
   @IsNumber()
   @IsNotEmpty()
-  price: 350;
+  price: number;
   @IsArray()
+  @ArrayUnique()
   @IsString({ each: true })
   @IsNotEmpty()
   taken: string[];
@@ -62,9 +62,10 @@ export class filmDto {
   @IsString()
   @IsNotEmpty()
   description: string;
+}
+
+export class filmFullDto extends filmDto {
   @IsArray()
   @IsNotEmpty()
-  @Type(() => scheduleDto)
-  @ValidateNested({ each: true })
-  schedule: scheduleDto[];
+  shedules: sheduleDto[];
 }
