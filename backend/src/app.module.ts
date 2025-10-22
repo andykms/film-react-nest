@@ -7,31 +7,17 @@ import { configProvider } from './app.config.provider';
 import { FilmsModule } from './films/films.module';
 import { OrderModule } from './order/order.module';
 import { RepositoryModule } from './repository/repository.module';
-import { WinstonModule } from 'nest-winston';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { DatabaseModule } from './database/database.module';
-import * as winston from 'winston';
+import { TskvLoggerService } from './tskv-logger/tskv-logger.service';
+import { JsonLoggerService } from './json-logger/json-logger.service';
+import { DevLoggerService } from './dev-logger/dev-logger.service';
 
 @Global()
 @Module({
   imports: [
     DatabaseModule.forRoot(configProvider.useValue, { synchronize: true }),
     ThrottlerModule.forRoot([{ ttl: 60, limit: 50 }]),
-    WinstonModule.forRoot({
-      levels: {
-        critical_error: 0,
-        error: 1,
-        special_warning: 2,
-        another_log_level: 3,
-        info: 4,
-      },
-      transports: [
-        new winston.transports.File({
-          filename: path.join(__dirname, './logs/error.log'),
-          level: 'error',
-        }),
-      ],
-    }),
     // @todo: Добавьте раздачу статических файлов из public
     ServeStaticModule.forRoot({
       rootPath: path.join(__dirname, '../public'),
@@ -41,7 +27,12 @@ import * as winston from 'winston';
     RepositoryModule,
   ],
   controllers: [],
-  providers: [configProvider],
+  providers: [
+    configProvider,
+    DevLoggerService,
+    JsonLoggerService,
+    TskvLoggerService,
+  ],
   exports: [configProvider],
 })
 export class AppModule {}
