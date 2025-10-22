@@ -3,8 +3,8 @@ import { LoggerService } from '@nestjs/common';
 
 @Injectable()
 export class JsonLoggerService implements LoggerService {
-  private ERROR_COLOR = '\x1b[41m';
-  private WARN_COLOR = '\x1b[43m';
+  public ERROR_COLOR = '\x1b[41m';
+  public WARN_COLOR = '\x1b[43m';
 
   formatMessage(level: string, message: any, ...optionalParams: any[]) {
     return JSON.stringify({ level, message, optionalParams });
