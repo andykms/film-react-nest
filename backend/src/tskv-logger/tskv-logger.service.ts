@@ -1,13 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { LoggerService } from '@nestjs/common';
 
 @Injectable()
 export class TskvLoggerService implements LoggerService {
-  private ERROR_COLOR = '\x1b[41m';
-  private WARN_COLOR = '\x1b[43m';
+  ERROR_COLOR = '\x1b[41m';
+  WARN_COLOR = '\x1b[43m';
 
-  formatMessage(level: string, message: any, ...optionalParams: any[]) {
-    return `level=${level}\tmessage=${message}\toptionalParams=${optionalParams}`;
+  formatMessage(level: string, message: any, optionalParams?: any[]) {
+    const fromArr = (message: any[]) => message.join('#');
+    const fromObject = (message: any) => JSON.stringify(message);
+
+    let log = `level=${level}\t`;
+    if (typeof message === 'string') {
+      log += `message=${message}`;
+    } else if (Array.isArray(message)) {
+      log += `message=${fromArr(message)}`;
+    } else {
+      log += `message=${fromObject(message)}`;
+    }
+
+    if (optionalParams && optionalParams.length > 0) {
+      log += `\toptionalParams=${fromObject(optionalParams)}`;
+    }
+
+    return log;
   }
 
   log(message: any, ...optionalParams: any[]) {

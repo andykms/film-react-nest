@@ -14,11 +14,16 @@ describe('LoggerService', () => {
 
     service = module.get<DevLoggerService>(DevLoggerService);
     console.log = jest.fn();
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2012, 12, 12));
   });
 
   it('check format log', () => {
     jest.spyOn(service, 'customLog');
 
     service.customLog(message);
+
+    expect(service.customLog).toHaveBeenCalledWith(message);
+    expect(console.log).toHaveBeenCalledWith(service.customFormat(message));
   });
 });

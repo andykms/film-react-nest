@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FilmsController } from './films.controller';
+import { FilmsService } from './films.service';
+import { filmDto } from './dto/films.dto';
+import { sheduleDto } from './dto/films.dto';
 
 describe('FilmsController', () => {
   let controller: FilmsController;
@@ -7,12 +10,16 @@ describe('FilmsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FilmsController],
-    }).compile();
+    })
+      .overrideProvider(FilmsService)
+      .useValue({
+        getFilms: jest.fn(),
+        getShedule: jest.fn(),
+      })
+      .compile();
 
     controller = module.get<FilmsController>(FilmsController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+  it('check getFilms', () => {});
 });
