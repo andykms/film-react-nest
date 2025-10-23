@@ -7,6 +7,9 @@ import {
   ArrayMinSize,
   IsEmail,
   ValidateNested,
+  IsPhoneNumber,
+  IsDateString,
+  Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -17,7 +20,10 @@ export class orderFilmDto {
   @IsString()
   @IsNotEmpty()
   session: string;
-  @IsString()
+  @IsDateString({ strict: true })
+  @Matches(
+    /[0-9]{4}-[0-9]{2}-[0-9]{2}[A-Z]{1}[0-9]{2}:[0-9]{2}:[0-9]{2}\+[0-9]{2}:[0-9]{2}/,
+  )
   @IsNotEmpty()
   daytime: string;
   @IsString()
@@ -49,5 +55,6 @@ export class orderDto {
   email: string;
   @IsNotEmpty()
   @IsString()
+  @IsPhoneNumber()
   phone: string;
 }
