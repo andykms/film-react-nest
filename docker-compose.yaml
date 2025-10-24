@@ -1,0 +1,85 @@
+version: "3.9"
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    networks:
+      - internal-network
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 512M
+        reservations:
+          cpus: 1
+          memory: 256M
+    depends_on:
+      - postgres
+    links:
+      - "db:postgres"
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 512M
+        reservations:
+          cpus: 1
+          memory: 256M
+    volumes:
+      - ./frontend:/usr/src/app/dist
+    volumes_from:
+      nginx
+    networks:
+      - internal-network
+    restart: on-failure
+  postgres:
+    image: postgres
+    env_file: ./postgres/.env
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data/pgdata
+    networks:
+      - internal-network
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 512M
+        reservations:
+          cpus: 1
+          memory: 256M
+  nginx:
+    build: ./nginx
+    ports:
+      -"80:80"
+    networks:
+      - internet
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 512M
+        reservations:
+          cpus: 1
+          memory: 256M
+    depends_on:
+      - frontend
+      - backend
+
+
+networks:
+  internal-network:
+    driver: bridge
+    internal: true
+  internet: 
+    driver: bridge
+    
+
+    
