@@ -43,6 +43,7 @@ services:
     env_file: ./postgres/.env
     volumes:
       - ./pg-data:/var/lib/postgresql/data/pgdata
+      - .:/postgres/docker-entrypoint-initdb.d
     networks:
       - internal-network
     restart: on-failure
@@ -54,6 +55,8 @@ services:
         reservations:
           cpus: 1
           memory: 256M
+    ports:
+      - "5432:5432"
   nginx:
     build: ./nginx
     ports:
