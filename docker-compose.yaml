@@ -8,14 +8,6 @@ services:
       - db-network
       - app-network
     restart: on-failure
-    deploy:
-      resources:
-        limits:
-          cpus: 2
-          memory: 512M
-        reservations:
-          cpus: 1
-          memory: 256M
     depends_on:
       - postgres
     links:
@@ -24,14 +16,6 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
-    deploy:
-      resources:
-        limits:
-          cpus: 2
-          memory: 512M
-        reservations:
-          cpus: 1
-          memory: 256M
     volumes:
       - ./frontend:/usr/src/app/dist
     volumes_from:
@@ -49,14 +33,6 @@ services:
     networks:
       - db-network
     restart: on-failure
-    deploy:
-      resources:
-        limits:
-          cpus: 2
-          memory: 512M
-        reservations:
-          cpus: 1
-          memory: 256M
     ports:
       - "5432:5432"
   nginx:
@@ -65,14 +41,6 @@ services:
       - internet
       - app-network
     restart: on-failure
-    deploy:
-      resources:
-        limits:
-          cpus: 2
-          memory: 512M
-        reservations:
-          cpus: 1
-          memory: 256M
     depends_on:
       - backend
     ports:
