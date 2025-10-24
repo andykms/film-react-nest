@@ -59,8 +59,6 @@ services:
       - "5432:5432"
   nginx:
     build: ./nginx
-    ports:
-      -"80:80"
     networks:
       - internet
     restart: on-failure
@@ -75,7 +73,8 @@ services:
     depends_on:
       - frontend
       - backend
-
+    ports:
+      - "80:80"
 
 networks:
   internal-network:
