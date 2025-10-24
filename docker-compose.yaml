@@ -5,7 +5,8 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - internal-network
+      - db-network
+      - app-network
     restart: on-failure
     deploy:
       resources:
@@ -18,7 +19,7 @@ services:
     depends_on:
       - postgres
     links:
-      - "db:postgres"
+      - "postgres:db"
   frontend:
     build: ./frontend
     ports:
@@ -34,10 +35,11 @@ services:
     volumes:
       - ./frontend:/usr/src/app/dist
     volumes_from:
-      nginx
+      - nginx
     networks:
-      - internal-network
+      - app-network
     restart: on-failure
+
   postgres:
     image: postgres
     env_file: ./postgres/.env
@@ -45,7 +47,7 @@ services:
       - ./pg-data:/var/lib/postgresql/data/pgdata
       - .:/postgres/docker-entrypoint-initdb.d
     networks:
-      - internal-network
+      - db-network
     restart: on-failure
     deploy:
       resources:
@@ -61,6 +63,7 @@ services:
     build: ./nginx
     networks:
       - internet
+      - app-network
     restart: on-failure
     deploy:
       resources:
@@ -71,13 +74,15 @@ services:
           cpus: 1
           memory: 256M
     depends_on:
-      - frontend
       - backend
     ports:
       - "80:80"
 
 networks:
-  internal-network:
+  db-network:
+    driver: bridge
+    internal: true
+  app-network:
     driver: bridge
     internal: true
   internet: 
