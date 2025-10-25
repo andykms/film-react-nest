@@ -3,6 +3,7 @@ FROM node:20-alpine AS build
 WORKDIR /usr/src/app
 
 COPY package-lock.json ./
+COPY package.json ./
 
 RUN npm ci
 
@@ -17,6 +18,7 @@ ENV NODE_ENV=production
 WORKDIR /usr/src/app
 
 COPY package-lock.json ./
+COPY package.json ./
 
 RUN npm ci --omit=dev
 
