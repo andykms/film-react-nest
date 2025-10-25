@@ -3,7 +3,7 @@ FROM node:20-alpine AS build
 WORKDIR /usr/src/app
 
 COPY ../frotend/package-lock.json ./
-COPY .../fronted/package.json ./
+COPY .../frontend/package.json ./
 
 RUN npm i
 
