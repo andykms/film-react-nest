@@ -12,17 +12,6 @@ services:
       - postgres
     links:
       - "postgres:db"
-  frontend:
-    build: ./frontend
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/usr/src/app/dist
-    volumes_from:
-      - nginx
-    networks:
-      - app-network
-    restart: on-failure
 
   postgres:
     image: postgres
