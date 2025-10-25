@@ -1,15 +1,5 @@
 version: "3.9"
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "3000:3000"
-    networks:
-      - db-network
-      - app-network
-    restart: on-failure
-    links:
-      - "postgres:db"
 
   postgres:
     image: postgres
@@ -22,12 +12,28 @@ services:
     restart: on-failure
     ports:
       - "5432:5432"
+      
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    networks:
+      - db-network
+      - app-network
+    restart: on-failure
+    depends_on:
+      - postgres
+    links:
+      - "postgres:db"
+
   nginx:
     build: ./nginx
     networks:
       - internet
       - app-network
     restart: on-failure
+    depends_on:
+      - backend
     ports:
       - "80:80"
 
