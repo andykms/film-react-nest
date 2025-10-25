@@ -8,8 +8,6 @@ services:
       - db-network
       - app-network
     restart: on-failure
-    depends_on:
-      - postgres
     links:
       - "postgres:db"
 
@@ -30,8 +28,6 @@ services:
       - internet
       - app-network
     restart: on-failure
-    depends_on:
-      - backend
     ports:
       - "80:80"
 
