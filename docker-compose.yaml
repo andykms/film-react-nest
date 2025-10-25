@@ -3,7 +3,11 @@ services:
 
   postgres:
     image: postgres
-    env_file: ./postgres/.env
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: ${PGDATA}
     volumes:
       - ./pg-data:/var/lib/postgresql/data/pgdata
       - .:/postgres/docker-entrypoint-initdb.d
@@ -12,7 +16,6 @@ services:
     restart: on-failure
     ports:
       - "5432:5432"
-      
   backend:
     build: ./backend
     ports:
@@ -21,10 +24,25 @@ services:
       - db-network
       - app-network
     restart: on-failure
+    environment:
+      DATABASE_DRIVER: ${DATABASE_DRIVER}
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DEBUG: ${DEBUG}
     depends_on:
       - postgres
-    links:
-      - "postgres:db"
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/usr/src/app/dist
+    networks:
+      - app-network
+    restart: on-failure
 
   nginx:
     build: ./nginx
@@ -34,6 +52,7 @@ services:
     restart: on-failure
     depends_on:
       - backend
+      - frontend
     ports:
       - "80:80"
 
@@ -47,5 +66,8 @@ networks:
   internet: 
     driver: bridge
     
+volumes:
+  frontend:
+    external: true
 
     
