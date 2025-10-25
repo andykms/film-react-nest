@@ -2,7 +2,7 @@ FROM node:20-alpine AS build
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
+COPY package-lock.json ./
 
 RUN npm i
 
@@ -16,7 +16,7 @@ ENV NODE_ENV=production
 
 WORKDIR /usr/src/app
 
-COPY --from=build /usr/src/app/package.json ./
+COPY --from=build /usr/src/app/package-lock.json ./
 
 RUN npm i --omit=dev
 
