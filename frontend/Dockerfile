@@ -24,4 +24,4 @@ RUN npm i --omit=dev
 
 COPY --from=build /usr/src/app/dist ./dist
 
-CMD ["npm", "run", "dev"]
+CMD ["sh", "-c", "echo 'фронтенд собран' && tail -f /dev/null"]

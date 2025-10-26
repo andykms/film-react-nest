@@ -39,7 +39,7 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/usr/src/app/dist
+      - frontend:/usr/src/app/dist
     networks:
       - app-network
     restart: on-failure
@@ -55,6 +55,8 @@ services:
       - frontend
     ports:
       - "80:80"
+    volumes:
+      - frontend:/usr/src/app
 
 networks:
   db-network:
@@ -68,6 +70,5 @@ networks:
     
 volumes:
   frontend:
-    external: true
 
     
