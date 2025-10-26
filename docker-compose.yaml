@@ -16,6 +16,7 @@ services:
     restart: on-failure
     ports:
       - "5432:5432"
+    container_name: postgres
   backend:
     build: ./backend
     ports:
@@ -34,15 +35,17 @@ services:
       DEBUG: ${DEBUG}
     depends_on:
       - postgres
+    container_name: backend
   frontend:
     build: ./frontend
     ports:
       - "5173:5173"
     volumes:
-      - frontend:/usr/src/app/dist
+      - frontend_data:/usr/src/app/dist
     networks:
       - app-network
     restart: on-failure
+    container_name: frontend
 
   nginx:
     build: ./nginx
@@ -56,19 +59,22 @@ services:
     ports:
       - "80:80"
     volumes:
-      - frontend:/usr/src/app
+      - frontend_data:/usr/share/nginx/html:ro 
+    container_name: nginx
 
 networks:
   db-network:
-    driver: bridge
     internal: true
+    driver: bridge
+    
   app-network:
-    driver: bridge
     internal: true
+    driver: bridge
+    
   internet: 
     driver: bridge
     
 volumes:
-  frontend:
+  frontend_data:
 
     

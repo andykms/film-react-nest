@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 COPY package-lock.json ./
 COPY package.json ./
 
-RUN npm i
+RUN npm i 
 
 COPY . .
 
@@ -20,9 +20,11 @@ WORKDIR /usr/src/app
 COPY package-lock.json ./
 COPY package.json ./
 
-RUN npm i
+RUN npm i --omit=dev
 
 COPY --from=build /usr/src/app/dist ./dist
+
+EXPOSE 3000
 
 CMD ["node", "dist/main"]
 
