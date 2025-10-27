@@ -10,13 +10,31 @@ services:
       PGDATA: ${PGDATA}
     volumes:
       - ./pg-data:/var/lib/postgresql/data/pgdata
-      - .:/postgres/docker-entrypoint-initdb.d
     networks:
       - db-network
     restart: on-failure
     ports:
       - "5432:5432"
     container_name: postgres
+    depends_on:
+      - pgadmin
+
+  pgadmin:
+    image: dpage/pgadmin4
+    networks:
+      - db-network
+      - internet
+    ports:
+      - "8080:80"
+    container_name: pgadmin
+    restart: on-failure
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      #PGADMIN_LISTEN_ADDRESS: ${PGADMIN_LISTEN_ADDRESS}
+      #PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
+
+
   backend:
     build: ./backend
     ports:
@@ -35,6 +53,7 @@ services:
       DEBUG: ${DEBUG}
     depends_on:
       - postgres
+      - pgadmin
     container_name: backend
   frontend:
     build: ./frontend
@@ -56,6 +75,8 @@ services:
     depends_on:
       - backend
       - frontend
+      - postgres
+      - pgadmin
     ports:
       - "80:80"
     volumes:

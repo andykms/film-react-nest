@@ -2,8 +2,8 @@ FROM node:20-alpine AS build
 
 WORKDIR /usr/src/app
 
-COPY package-lock.json ./
-COPY package.json ./
+COPY ./package-lock.json ./
+COPY ./package.json ./
 
 RUN npm i 
 
@@ -17,12 +17,14 @@ ENV NODE_ENV=production
 
 WORKDIR /usr/src/app
 
-COPY package-lock.json ./
-COPY package.json ./
+COPY ./package-lock.json ./
+COPY ./package.json ./
 
 RUN npm i --omit=dev
 
 COPY --from=build /usr/src/app/dist ./dist
+
+COPY ./public ./public
 
 EXPOSE 3000
 

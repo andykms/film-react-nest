@@ -1,3 +1,4 @@
-node_modules
+/node_modules
 .idea
-pg-data
+/pg-data
+.env
