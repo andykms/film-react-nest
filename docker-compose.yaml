@@ -36,6 +36,7 @@ services:
 
 
   backend:
+    image: andykms/film-react-nest-backend:node20-alpine
     build: ./backend
     ports:
       - "3000:3000"
@@ -56,6 +57,7 @@ services:
       - pgadmin
     container_name: backend
   frontend:
+    image: andykms/film-react-nest-frontend:node20-alpine
     build: ./frontend
     ports:
       - "5173:5173"
@@ -67,6 +69,7 @@ services:
     container_name: frontend
 
   nginx:
+    image: andykms/film-react-nest-nginx
     build: ./nginx
     networks:
       - internet
