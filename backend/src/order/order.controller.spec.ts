@@ -714,7 +714,6 @@ const emptyTickets = {
 };
 
 describe('OrderController', () => {
-  let controller: OrderController;
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -726,7 +725,7 @@ describe('OrderController', () => {
       .useValue({
         create: jest.fn(() => {
           let timeout;
-          return new Promise((res, rej) => {
+          return new Promise((res) => {
             timeout = setTimeout(() => {
               res(correctOrderMock);
             }, 1);
@@ -741,7 +740,6 @@ describe('OrderController', () => {
       })
       .compile();
 
-    controller = module.get<OrderController>(OrderController);
     app = module.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     await app.init();

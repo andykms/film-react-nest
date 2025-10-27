@@ -1,10 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TskvLoggerService } from './tskv-logger.service';
 
-type Ttskv = {
-  [key in string]: string;
-};
-
 describe('TskvLoggerService', () => {
   let service: TskvLoggerService;
 
@@ -51,14 +47,6 @@ describe('TskvLoggerService', () => {
     'ierofner',
     34434,
   ];
-
-  const getExpectedMessage = (
-    level: 'log' | 'error' | 'warn',
-    message: string,
-    ...optionalParams: any[]
-  ) =>
-    `level=${level}\tmessage=${message}\t` +
-    (optionalParams ? `optionalParams=${JSON.stringify(optionalParams)}` : '');
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

@@ -159,8 +159,6 @@ const sheduleMock: sheduleDto[] = [
 ];
 
 describe('FilmsController', () => {
-  let controller: FilmsController;
-  let service: FilmsService;
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -172,7 +170,7 @@ describe('FilmsController', () => {
       .useValue({
         getFilms: jest.fn(() => {
           let timeout;
-          return new Promise((res, rej) => {
+          return new Promise((res) => {
             timeout = setTimeout(() => {
               res(filmsMock);
             }, 1);
@@ -183,7 +181,7 @@ describe('FilmsController', () => {
         }),
         getShedule: jest.fn(() => {
           let timeout;
-          return new Promise((res, rej) => {
+          return new Promise((res) => {
             timeout = setTimeout(() => {
               res(sheduleMock);
             }, 1);
@@ -196,8 +194,6 @@ describe('FilmsController', () => {
       .compile();
 
     app = module.createNestApplication();
-    controller = module.get<FilmsController>(FilmsController);
-    service = module.get<FilmsService>(FilmsService);
 
     await app.init();
   });
