@@ -2,3 +2,4 @@
 /.idea
 /pg-data
 /.env
+!.env.example
