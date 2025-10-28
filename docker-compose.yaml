@@ -56,7 +56,6 @@ services:
       - postgres
       - pgadmin
     container_name: backend
-    
   frontend:
     image: andykms/film-react-nest-frontend
     build: ./frontend
@@ -83,12 +82,9 @@ services:
       - pgadmin
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - frontend_data:/usr/share/nginx/html:ro 
     container_name: nginx
-
-
 
 networks:
   db-network:
