@@ -36,7 +36,7 @@ services:
 
 
   backend:
-    image: andykms/film-react-nest-backend:node20-alpine
+    image: andykms/film-react-nest-backend
     build: ./backend
     ports:
       - "3000:3000"
@@ -57,7 +57,7 @@ services:
       - pgadmin
     container_name: backend
   frontend:
-    image: andykms/film-react-nest-frontend:node20-alpine
+    image: andykms/film-react-nest-frontend
     build: ./frontend
     ports:
       - "5173:5173"
