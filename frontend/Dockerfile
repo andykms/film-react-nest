@@ -7,6 +7,9 @@ COPY ./package.json ./
 
 RUN npm i
 
+ARG API_URL
+ENV VITE_API_URL=$API_URL
+
 COPY . .
 
 RUN npm run build

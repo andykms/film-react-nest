@@ -10,7 +10,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useLogger(new TskvLoggerService());
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: [
+      'http://localhost:5173',
+      'http://absolute.cinema.nomorepartiessbs.ru',
+      'https://absolute.cinema.nomorepartiessbs.ru',
+    ],
     credentials: true,
   });
   await app.listen(3000);
