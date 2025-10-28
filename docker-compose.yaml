@@ -61,8 +61,8 @@ services:
     build: ./frontend
     ports:
       - "5173:5173"
-    args:
-      API_URL: "http://absolute.cinema.nomorepartiessbs.ru"
+    environment:
+      VITE_API_URL: ${VITE_API_URL} 
     volumes:
       - frontend_data:/usr/src/app/dist
     networks:
