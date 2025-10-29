@@ -69,7 +69,7 @@ services:
     container_name: frontend
 
   nginx:
-    image: andykms/film-react-nest-nginx
+    build: ./nginx
     networks:
       - internet
       - app-network
