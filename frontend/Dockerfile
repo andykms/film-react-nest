@@ -5,10 +5,9 @@ WORKDIR /usr/src/app
 COPY ./package-lock.json ./
 COPY ./package.json ./
 
-RUN npm i
-
-
 COPY . .
+
+RUN npm i
 
 RUN npm run build
 
