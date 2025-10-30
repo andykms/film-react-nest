@@ -9,8 +9,8 @@ COPY . .
 
 RUN npm i
 
-RUN cp ./.env.example ./dist
+RUN mkdir ./dist
 
-RUN mv ./dist/.env.example ./dist/.env
+RUN cp ./.env.example ./dist/.env
 
 CMD ["npm", "run", "build"]
