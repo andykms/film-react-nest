@@ -9,6 +9,4 @@ COPY . .
 
 RUN npm i
 
-RUN npm run build
-
-CMD ["sh", "-c", "echo 'фронтенд собран' && tail -f /dev/null"]
+CMD ["npm", "run", "build"]
