@@ -9,5 +9,4 @@ COPY . .
 
 RUN npm i
 
-
-CMD ["npm", "run", "build", "&&", "cp", ".env.example", "dist/.env"]
+CMD ["sh", "-c", "npm run build && cp ./.env.example ./dist/.env && ls -la"]
