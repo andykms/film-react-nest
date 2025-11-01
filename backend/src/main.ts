@@ -1,16 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import 'dotenv/config';
+import { TskvLoggerService } from './tskv-logger/tskv-logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/afisha');
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+  app.useLogger(new TskvLoggerService());
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: [
+      'http://localhost:5173',
+      'http://absolute.cinema.nomorepartiessbs.ru',
+      'https://absolute.cinema.nomorepartiessbs.ru',
+    ],
     credentials: true,
   });
   await app.listen(3000);
