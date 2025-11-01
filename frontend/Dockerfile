@@ -9,4 +9,6 @@ COPY . .
 
 RUN npm i
 
-CMD ["sh", "-c", "npm run build && cp ./.env.example ./dist/.env && cd ./dist && ls -la"]
+RUN cp ./.env.example ./.env
+
+CMD ["sh", "-c", "VITE_API_URL=${VITE_API_URL} VITE_CDN_URL=${VITE_CDN_URL} npm run build && cp ./.env.example ./dist/.env && cd ./dist && ls -la"]
