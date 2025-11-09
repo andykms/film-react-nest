@@ -1,0 +1,104 @@
+version: "3.9"
+services:
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: ${PGDATA}
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data/pgdata
+    networks:
+      - db-network
+    restart: on-failure
+    ports:
+      - "5432:5432"
+    container_name: postgres
+    depends_on:
+      - pgadmin
+
+  pgadmin:
+    image: dpage/pgadmin4
+    networks:
+      - db-network
+      - internet
+    ports:
+      - "8080:80"
+    container_name: pgadmin
+    restart: on-failure
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      #PGADMIN_LISTEN_ADDRESS: ${PGADMIN_LISTEN_ADDRESS}
+      #PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
+
+
+  backend:
+    image: andykms/film-react-nest-backend
+    ports:
+      - "3000:3000"
+    networks:
+      - db-network
+      - app-network
+    restart: on-failure
+    environment:
+      DATABASE_DRIVER: ${DATABASE_DRIVER}
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DEBUG: ${DEBUG}
+    depends_on:
+      - postgres
+      - pgadmin
+    container_name: backend
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: ${VITE_API_URL} 
+      VITE_CDN_URL: ${VITE_CDN_URL}
+    volumes:
+      - frontend_data:/usr/src/app/dist
+    networks:
+      - app-network
+    restart: on-failure
+    container_name: frontend
+
+  nginx:
+    build: ./nginx
+    networks:
+      - internet
+      - app-network
+    restart: on-failure
+    depends_on:
+      - backend
+      - frontend
+      - postgres
+      - pgadmin
+    ports:
+      - "80:80"
+    volumes:
+      - frontend_data:/usr/share/nginx/html:ro 
+    container_name: nginx
+
+networks:
+  db-network:
+    internal: true
+    driver: bridge
+    
+  app-network:
+    internal: true
+    driver: bridge
+    
+  internet: 
+    driver: bridge
+    
+volumes:
+  frontend_data:
+
+    

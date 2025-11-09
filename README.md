@@ -1,5 +1,15 @@
 # FILM!
 
+## Ссылка на деплой
+
+Фронтенд:
+
+`http://absolute.cinema.nomorepartiessbs.ru`
+
+Бэкенд (поддомен):
+
+`http://absolute.cinema.nomorepartiessbs.ru/api`
+
 ## Установка
 
 ### MongoDB
